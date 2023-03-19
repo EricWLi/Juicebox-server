@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JuiceboxServer.Models
 {
-    [Table("Party")]
     public class Party
     {
         /// <summary>
@@ -18,9 +17,34 @@ namespace JuiceboxServer.Models
         public string? Name { get; set; }
 
         /// <summary>
-        /// The user who created the party.
+        /// The date the party was created.
         /// </summary>
-        [ForeignKey("Id")]
+        public DateTime DateCreated { get; set; }
+
+        /// <summary>
+        /// The date the party was last updated.
+        /// </summary>
+        public DateTime DateUpdated { get; set; }
+
+
+        /**
+         * Navigation Properties
+         */
+
+        /// <summary>
+        /// The navigation property to the user that created the party.
+        /// </summary>
         public User Host { get; set; } = null!;
+
+        /// <summary>
+        /// The party members.
+        /// </summary>
+        public ICollection<User> Members { get; set; } = null!;
+
+        /// <summary>
+        /// The party's song queue.
+        /// </summary>
+        public ICollection<QueueItem> Queue { get; set; } = null!;
+
     }
 }

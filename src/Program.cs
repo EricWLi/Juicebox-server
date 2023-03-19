@@ -1,17 +1,24 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using JuiceboxServer.Data;
+using JuiceboxServer.Models;
+using JuiceboxServer.Services;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("JuiceboxDB");
+
+builder.Services.AddDbContext<JuiceboxContext>(options => 
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<JuiceboxContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<JuiceboxContext>(options => 
-    options.UseSqlServer(builder.Configuration.GetConnectionString("JuiceboxDB")));
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -23,6 +30,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

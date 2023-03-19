@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JuiceboxServer.Models
 {
-    [Table("QueueItem")]
     public class QueueItem
     {
         /// <summary>
@@ -15,7 +14,6 @@ namespace JuiceboxServer.Models
         /// <summary>
         /// The party that the queue belongs to.
         /// </summary>
-        [ForeignKey("Id")]
         public Party Party {  get; set; } = null!;
         
         /// <summary>
@@ -37,5 +35,10 @@ namespace JuiceboxServer.Models
         /// The duration of the song, in milliseconds.
         /// </summary>
         public int SongDuration { get; set; }
+
+        /// <summary>
+        /// The user who added the song to the queue.
+        /// </summary>
+        public User AddedBy { get; set; } = null!;
     }
 }

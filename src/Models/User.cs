@@ -1,26 +1,18 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace JuiceboxServer.Models
 {
-    [Table("UserAccount")]
-    public class User
+    public class User : IdentityUser
     {
         /// <summary>
-        /// The identifier of the registered Juicebox user.
+        /// The first name of the registered Juicebox user.
         /// </summary>
-        [Key]
-        public int Id { get; set; }
+        public string FirstName { get; set; } = null!;
 
         /// <summary>
-        /// The username of the registered Juicebox user.
+        /// The last name of the registered Juicebox user.
         /// </summary>
-        public string Username { get; set; } = null!;
-
-        /// <summary>
-        /// The Argon2 password hash of the registered Juicebox user.
-        /// </summary>
-        public string PasswordHash { get; set; } = null!;
+        public string LastName { get; set; } = null!;
 
         /// <summary>
         /// The date the user registered.
@@ -30,6 +22,20 @@ namespace JuiceboxServer.Models
         /// <summary>
         /// The date the user was last active.
         /// </summary>
-        public DateTime LastActive { get; set;}
+        public DateTime DateUpdated { get; set; }
+
+        /**
+         * Navigation Properties
+         */
+
+        /// <summary>
+        /// The list of parties that the user owns.
+        /// </summary>
+        public ICollection<Party> HostedParties { get; set; } = null!;
+
+        /// <summary>
+        /// The list of parties the user is a member of.
+        /// </summary>
+        public ICollection<Party> JoinedParties { get; set; } = null!;
     }
 }
