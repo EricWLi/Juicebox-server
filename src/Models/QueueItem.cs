@@ -39,6 +39,6 @@ namespace JuiceboxServer.Models
         /// <summary>
         /// The user who added the song to the queue.
         /// </summary>
-        public User AddedBy { get; set; } = null!;
+        public AppUser AddedBy { get; set; } = null!;
     }
 }

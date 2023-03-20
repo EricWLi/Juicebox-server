@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace JuiceboxServer.Data
 {
-    public class JuiceboxContext : IdentityDbContext<User>
+    public class JuiceboxContext : IdentityDbContext<AppUser>
     {
         public JuiceboxContext(DbContextOptions<JuiceboxContext> options) : base(options)
         {

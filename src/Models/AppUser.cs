@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace JuiceboxServer.Models
 {
-    public class User : IdentityUser
+    public class AppUser : IdentityUser
     {
         /// <summary>
         /// The first name of the registered Juicebox user.

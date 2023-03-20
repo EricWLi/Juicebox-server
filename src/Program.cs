@@ -10,7 +10,7 @@ var connectionString = builder.Configuration.GetConnectionString("JuiceboxDB");
 builder.Services.AddDbContext<JuiceboxContext>(options => 
     options.UseSqlServer(connectionString));
 
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<JuiceboxContext>()
     .AddDefaultTokenProviders();
 

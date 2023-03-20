@@ -34,12 +34,12 @@ namespace JuiceboxServer.Models
         /// <summary>
         /// The navigation property to the user that created the party.
         /// </summary>
-        public User Host { get; set; } = null!;
+        public AppUser Host { get; set; } = null!;
 
         /// <summary>
         /// The party members.
         /// </summary>
-        public ICollection<User> Members { get; set; } = null!;
+        public ICollection<AppUser> Members { get; set; } = null!;
 
         /// <summary>
         /// The party's song queue.

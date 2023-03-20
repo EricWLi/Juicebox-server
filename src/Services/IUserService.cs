@@ -5,13 +5,12 @@ namespace JuiceboxServer.Services
 {
     public interface IUserService
     {
-        Task<User> GetUserByIdAsync(int id);
-        Task<User> GetUserByUsernameAsync(string username);
-        Task<IdentityResult> RegisterUserAsync(User user, string password);
-        Task<bool> DeleteUserAsync(int id);
-        Task UpdateUserAsync(User user);
-        Task<bool> ValidateCredentialsAsync(string username, string password);
-        Task<bool> UserExistsAsync(int id);
-        Task<bool> UserExistsAsync(string username);
+        Task<AppUser> GetUserByIdAsync(string id);
+        Task<AppUser> GetUserByUsernameAsync(string username);
+        Task<IdentityResult> RegisterUserAsync(AppUser user, string password);
+        Task<bool> DeleteUserAsync(string username);
+        Task<IdentityResult> UpdateUserAsync(AppUser user);
+        Task<SignInResult> SignInAsync(string username, string password);
+        Task<bool> UsernameExistsAsync(string username);
     }
 }

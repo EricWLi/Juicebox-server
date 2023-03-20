@@ -6,13 +6,13 @@ namespace JuiceboxServer.Services
     public class UserService : IUserService
     {
         private readonly ILogger<UserService> _logger;
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
         public UserService(
             ILogger<UserService> logger,
-            UserManager<User> userManager, 
-            SignInManager<User> signInManager)
+            UserManager<AppUser> userManager, 
+            SignInManager<AppUser> signInManager)
         {
             _logger = logger;
             _userManager = userManager;
@@ -25,56 +25,82 @@ namespace JuiceboxServer.Services
         /// <param name="user">The new user to be added to the database. Must have a unique username.</param>
         /// <param name="password">The password for the new user</param>
         /// <returns>An IdentityResult indicating if registration was successful.</returns>
-        public async Task<IdentityResult> RegisterUserAsync(User user, string password)
+        public async Task<IdentityResult> RegisterUserAsync(AppUser user, string password)
         {
             _logger.LogInformation($"Registering user {user.UserName}");
             var result = await _userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-                _logger.LogInformation($"User {user.UserName} registered");
-            }
-            else
-            {
-                _logger.LogInformation($"User {user.UserName} registration failed");
-            }
-
             return result;
         }
 
-        public async Task<bool> DeleteUserAsync(int id)
+        /// <summary>
+        /// Deletes a user from the database.
+        /// <summary>
+        /// <param name="username">The username of the user to be deleted.</param>
+        /// <returns>A boolean indicating if the deletion was successful.</returns>
+        public async Task<bool> DeleteUserAsync(string username)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            _logger.LogInformation($"Deleting user {user.UserName}");
+            var result = await _userManager.DeleteAsync(user);
+            return result.Succeeded;
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        /// <summary>
+        /// Gets a user by the user ID.
+        /// </summary>
+        /// <param name="id">The ID of the user to be retrieved.</param>
+        /// <returns>The user with the given ID.</returns>
+        public async Task<AppUser> GetUserByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            return await _userManager.FindByIdAsync(id);
         }
 
-        public async Task<User> GetUserByUsernameAsync(string username)
+        /// <summary>
+        /// Gets a user by the username.
+        /// </summary>
+        /// <param name="username">The username of the user to be retrieved.</param>
+        /// <returns>The user with the given username.</returns>
+        public Task<AppUser> GetUserByUsernameAsync(string username)
         {
-            throw new NotImplementedException();
+            return _userManager.FindByNameAsync(username);
         }
 
-        public async Task UpdateUserAsync(User user)
+        /// <summary>
+        /// Updates a user object.
+        /// </summary>
+        /// <param name="user">The user to be updated.</param>
+        /// <returns>An IdentityResult indicating if the update was successful.</returns>
+        public Task<IdentityResult> UpdateUserAsync(AppUser user)
         {
-            throw new NotImplementedException();
+            return _userManager.UpdateAsync(user);
         }
 
-        public async Task<bool> UserExistsAsync(int id)
+        /// <summary>
+        /// Checks if a username already exists in the database.
+        /// </summary>
+        /// <param name="username">The username to be checked.</param>
+        /// <returns>A boolean indicating if the username already exists.</returns>
+        public async Task<bool> UsernameExistsAsync(string username)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByNameAsync(username);
+            return user != null;
         }
 
-        public async Task<bool> UserExistsAsync(string username)
+        /// <summary>
+        /// Checks if the user credentials are valid.
+        /// </summary>
+        /// <param name="username">The username to be checked.</param>
+        /// <param name="password">The password to be checked.</param>
+        /// <returns>A boolean indicating if the credentials are valid.</returns>
+        public Task<SignInResult> SignInAsync(string username, string password)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> ValidateCredentialsAsync(string username, string password)
-        {
-            throw new NotImplementedException();
+            return _signInManager.PasswordSignInAsync(username, password, true, false);
         }
     }
 }
