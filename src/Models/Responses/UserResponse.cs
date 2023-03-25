@@ -1,6 +1,6 @@
 namespace JuiceboxServer.Models.Responses
 {
-    public class UserResponseModel
+    public class UserResponse
     {
         public string Id { get; set; } = null!;
         public string? FirstName { get; set; }
@@ -9,7 +9,7 @@ namespace JuiceboxServer.Models.Responses
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
 
-        public UserResponseModel(AppUser user)
+        public UserResponse(AppUser user)
         {
             Id = user.Id;
             FirstName = user.FirstName;

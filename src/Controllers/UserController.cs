@@ -25,11 +25,11 @@ namespace JuiceboxServer.Controllers
         public async Task<IActionResult> GetUser(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            return Ok(new UserResponseModel(user));
+            return Ok(new UserResponse(user));
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest model)
         {
             if (!ModelState.IsValid)
             {
@@ -44,15 +44,13 @@ namespace JuiceboxServer.Controllers
                 return BadRequest(result.Errors);
             }
 
-            var response = new UserResponseModel(user);
+            var response = new UserResponse(user);
             
             return Ok(response);
         }
         
-
-        // TODO: POST /api/users/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestModel model)
+        public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
             if (!ModelState.IsValid)
             {
@@ -74,9 +72,10 @@ namespace JuiceboxServer.Controllers
         [Authorize]
         public async Task<IActionResult> MyProfile()
         {
+            Console.WriteLine("GET /api/users/me");
             string id = User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
             AppUser user = await _userService.GetUserByIdAsync(id);
-            var response = new UserResponseModel(user);
+            var response = new UserResponse(user);
 
             return Ok(response);
         }

@@ -1,6 +1,6 @@
 namespace JuiceboxServer.Models.Requests
 {
-    public class LoginRequestModel
+    public class LoginRequest
     {
         /// <summary>
         /// The username of the user logging in.
