@@ -14,11 +14,17 @@ namespace JuiceboxServer.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
+        private readonly ITokenService _tokenService;
 
-        public UserController(ILogger<UserController> logger, IUserService userService)
+        public UserController(
+            ILogger<UserController> logger,
+            IUserService userService,
+            ITokenService tokenService
+        )
         {
             _logger = logger;
             _userService = userService;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
@@ -45,10 +51,9 @@ namespace JuiceboxServer.Controllers
             }
 
             var response = new UserResponse(user);
-            
             return Ok(response);
         }
-        
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
@@ -63,8 +68,16 @@ namespace JuiceboxServer.Controllers
             {
                 return Forbid();
             }
+            
+            AppUser user = await _userService.GetUserByUsernameAsync(model.Username);
+            string accessToken = _tokenService.CreateToken(user);
 
-            return Ok();
+            var response = new AuthenticationResponse {
+                Username = model.Username,
+                AccessToken = accessToken
+            };
+
+            return Ok(response);
         }
 
         // TODO: GET /api/users/me
@@ -72,11 +85,16 @@ namespace JuiceboxServer.Controllers
         [Authorize]
         public async Task<IActionResult> MyProfile()
         {
-            Console.WriteLine("GET /api/users/me");
-            string id = User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
-            AppUser user = await _userService.GetUserByIdAsync(id);
-            var response = new UserResponse(user);
+            string userId = User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
 
+            AppUser user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var response = new UserResponse(user);
             return Ok(response);
         }
 
