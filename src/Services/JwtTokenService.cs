@@ -1,7 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using JuiceboxServer.Config;
 using JuiceboxServer.Models;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JuiceboxServer.Services
@@ -9,12 +11,12 @@ namespace JuiceboxServer.Services
     public class JwtTokenService : ITokenService
     {
         private readonly IUserService _userService;
-        private readonly IConfiguration _configuration;
+        private readonly JwtSettings _settings;
 
-        public JwtTokenService(IUserService userService, IConfiguration configuration)
+        public JwtTokenService(IUserService userService, IOptions<JwtSettings> settings)
         {
             _userService = userService;
-            _configuration = configuration;
+            _settings = settings.Value;
         }
 
         public string CreateToken(AppUser user)
@@ -25,7 +27,7 @@ namespace JuiceboxServer.Services
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var secret = Encoding.ASCII.GetBytes(_configuration["Jwt:Secret"]);
+            var secret = Encoding.ASCII.GetBytes(_settings.Secret);
             var key = new SymmetricSecurityKey(secret);
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
