@@ -76,9 +76,10 @@ namespace JuiceboxServer.Services
         /// </summary>
         /// <param name="user">The user to be updated.</param>
         /// <returns>An IdentityResult indicating if the update was successful.</returns>
-        public Task<IdentityResult> UpdateUserAsync(AppUser user)
+        public async Task<IdentityResult> UpdateUserAsync(AppUser user)
         {
-            return _userManager.UpdateAsync(user);
+            _logger.LogInformation($"Updating user {user.UserName}");
+            return await _userManager.UpdateAsync(user);
         }
 
         /// <summary>
