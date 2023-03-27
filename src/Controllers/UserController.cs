@@ -80,13 +80,11 @@ namespace JuiceboxServer.Controllers
             return Ok(response);
         }
 
-        // TODO: GET /api/users/me
         [HttpGet("me")]
         [Authorize]
         public async Task<IActionResult> MyProfile()
         {
             string userId = User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
-
             AppUser user = await _userService.GetUserByIdAsync(userId);
 
             if (user == null)
@@ -97,7 +95,5 @@ namespace JuiceboxServer.Controllers
             var response = new UserResponse(user);
             return Ok(response);
         }
-
-        // TODO: PUT /api/users/me
     }
 }

@@ -4,22 +4,23 @@ using JuiceboxServer.Services;
 
 namespace JuiceboxServer.Controllers
 {
+    [ApiController]
     [Route("api/songs")]
     public class SongController : ControllerBase
     {
         private readonly ILogger<SongController> _logger;
         private readonly JuiceboxContext _context;
-        private readonly IApiClient _apiClient;
+        private readonly ISpotifyClient _spotifyClient;
 
         public SongController(
             ILogger<SongController> logger,
             JuiceboxContext context,
-            IApiClient apiClient
+            ISpotifyClient spotifyClient
         )
         {
             _logger = logger;
             _context = context;
-            _apiClient = apiClient;
+            _spotifyClient = spotifyClient;
         }
 
         // TODO: GET /api/songs/search
