@@ -3,6 +3,7 @@ using JuiceboxServer.Config;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.WebUtilities;
 using JuiceboxServer.Models;
+using JuiceboxServer.Models.Responses;
 
 namespace JuiceboxServer.Services
 {
@@ -68,9 +69,29 @@ namespace JuiceboxServer.Services
             return QueryHelpers.AddQueryString(baseAuthUrl, queryParams);
         }
 
-        public async Task<SpotifyToken> GetTokens()
+        public async Task<SpotifyToken> GetTokens(string code)
         {
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
+            string basicAuth = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_settings.ClientId}:{_settings.ClientSecret}"));
+
+            request.Headers.Add("Authorization", $"Basic {basicAuth}");
+            request.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "grant_type", "authorization_code" },
+                { "code", code },
+                { "redirect_uri", _settings.RedirectUri }
+            });
             
+            var response = await _httpClient.SendAsync(request);
+            var tokenResponse = await response.Content.ReadFromJsonAsync<SpotifyTokenResponse>();
+
+            return new SpotifyToken
+            {
+                AccessToken = tokenResponse.AccessToken,
+                RefreshToken = tokenResponse.RefreshToken
+            };
         }
     }
 }

@@ -6,6 +6,6 @@ namespace JuiceboxServer.Services
     {
         string CreateState(int length = 16);
         string GetAuthorizationUrl(string? state = null);
-        Task<SpotifyToken> GetTokens();
+        Task<SpotifyToken> GetTokens(string code);
     }
 }
