@@ -22,69 +22,22 @@ namespace JuiceboxServer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("JuiceboxServer.Models.Party", b =>
+            modelBuilder.Entity("AppUserParty", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("JoinedPartiesId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("HostId")
+                    b.Property<string>("MembersId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("JoinedPartiesId", "MembersId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("MembersId");
 
-                    b.HasIndex("HostId");
-
-                    b.ToTable("Parties");
+                    b.ToTable("AppUserParty");
                 });
 
-            modelBuilder.Entity("JuiceboxServer.Models.QueueItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AddedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("PartyId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SongArtist")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SongDuration")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SongTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SpotifyUri")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AddedById");
-
-                    b.HasIndex("PartyId");
-
-                    b.ToTable("QueueItems");
-                });
-
-            modelBuilder.Entity("JuiceboxServer.Models.User", b =>
+            modelBuilder.Entity("JuiceboxServer.Models.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -161,6 +114,97 @@ namespace JuiceboxServer.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("JuiceboxServer.Models.Party", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("HostId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostId");
+
+                    b.ToTable("Parties");
+                });
+
+            modelBuilder.Entity("JuiceboxServer.Models.QueueItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AddedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PartyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SongArtist")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SongDuration")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SongTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpotifyUri")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddedById");
+
+                    b.HasIndex("PartyId");
+
+                    b.ToTable("QueueItems");
+                });
+
+            modelBuilder.Entity("JuiceboxServer.Models.SpotifyToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SpotifyTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -296,24 +340,24 @@ namespace JuiceboxServer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PartyUser", b =>
+            modelBuilder.Entity("AppUserParty", b =>
                 {
-                    b.Property<int>("JoinedPartiesId")
-                        .HasColumnType("int");
+                    b.HasOne("JuiceboxServer.Models.Party", null)
+                        .WithMany()
+                        .HasForeignKey("JoinedPartiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("MembersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("JoinedPartiesId", "MembersId");
-
-                    b.HasIndex("MembersId");
-
-                    b.ToTable("PartyUser");
+                    b.HasOne("JuiceboxServer.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("JuiceboxServer.Models.Party", b =>
                 {
-                    b.HasOne("JuiceboxServer.Models.User", "Host")
+                    b.HasOne("JuiceboxServer.Models.AppUser", "Host")
                         .WithMany("HostedParties")
                         .HasForeignKey("HostId");
 
@@ -322,7 +366,7 @@ namespace JuiceboxServer.Migrations
 
             modelBuilder.Entity("JuiceboxServer.Models.QueueItem", b =>
                 {
-                    b.HasOne("JuiceboxServer.Models.User", "AddedBy")
+                    b.HasOne("JuiceboxServer.Models.AppUser", "AddedBy")
                         .WithMany()
                         .HasForeignKey("AddedById");
 
@@ -337,6 +381,15 @@ namespace JuiceboxServer.Migrations
                     b.Navigation("Party");
                 });
 
+            modelBuilder.Entity("JuiceboxServer.Models.SpotifyToken", b =>
+                {
+                    b.HasOne("JuiceboxServer.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -348,7 +401,7 @@ namespace JuiceboxServer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("JuiceboxServer.Models.User", null)
+                    b.HasOne("JuiceboxServer.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -357,7 +410,7 @@ namespace JuiceboxServer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("JuiceboxServer.Models.User", null)
+                    b.HasOne("JuiceboxServer.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -372,7 +425,7 @@ namespace JuiceboxServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("JuiceboxServer.Models.User", null)
+                    b.HasOne("JuiceboxServer.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -381,36 +434,21 @@ namespace JuiceboxServer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("JuiceboxServer.Models.User", null)
+                    b.HasOne("JuiceboxServer.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PartyUser", b =>
+            modelBuilder.Entity("JuiceboxServer.Models.AppUser", b =>
                 {
-                    b.HasOne("JuiceboxServer.Models.Party", null)
-                        .WithMany()
-                        .HasForeignKey("JoinedPartiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("JuiceboxServer.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("MembersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("HostedParties");
                 });
 
             modelBuilder.Entity("JuiceboxServer.Models.Party", b =>
                 {
                     b.Navigation("Queue");
-                });
-
-            modelBuilder.Entity("JuiceboxServer.Models.User", b =>
-                {
-                    b.Navigation("HostedParties");
                 });
 #pragma warning restore 612, 618
         }

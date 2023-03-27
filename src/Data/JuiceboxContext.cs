@@ -12,6 +12,7 @@ namespace JuiceboxServer.Data
 
         public DbSet<Party> Parties { get; set; } = null!;
         public DbSet<QueueItem> QueueItems { get; set; } = null!;
+        public DbSet<SpotifyToken> SpotifyTokens { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

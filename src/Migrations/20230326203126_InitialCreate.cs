@@ -180,7 +180,28 @@ namespace JuiceboxServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PartyUser",
+                name: "SpotifyTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AccessToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpotifyTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpotifyTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppUserParty",
                 columns: table => new
                 {
                     JoinedPartiesId = table.Column<int>(type: "int", nullable: false),
@@ -188,15 +209,15 @@ namespace JuiceboxServer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PartyUser", x => new { x.JoinedPartiesId, x.MembersId });
+                    table.PrimaryKey("PK_AppUserParty", x => new { x.JoinedPartiesId, x.MembersId });
                     table.ForeignKey(
-                        name: "FK_PartyUser_AspNetUsers_MembersId",
+                        name: "FK_AppUserParty_AspNetUsers_MembersId",
                         column: x => x.MembersId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PartyUser_Parties_JoinedPartiesId",
+                        name: "FK_AppUserParty_Parties_JoinedPartiesId",
                         column: x => x.JoinedPartiesId,
                         principalTable: "Parties",
                         principalColumn: "Id",
@@ -231,6 +252,11 @@ namespace JuiceboxServer.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppUserParty_MembersId",
+                table: "AppUserParty",
+                column: "MembersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -277,11 +303,6 @@ namespace JuiceboxServer.Migrations
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PartyUser_MembersId",
-                table: "PartyUser",
-                column: "MembersId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_QueueItems_AddedById",
                 table: "QueueItems",
                 column: "AddedById");
@@ -290,10 +311,18 @@ namespace JuiceboxServer.Migrations
                 name: "IX_QueueItems_PartyId",
                 table: "QueueItems",
                 column: "PartyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SpotifyTokens_UserId",
+                table: "SpotifyTokens",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AppUserParty");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -310,10 +339,10 @@ namespace JuiceboxServer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "PartyUser");
+                name: "QueueItems");
 
             migrationBuilder.DropTable(
-                name: "QueueItems");
+                name: "SpotifyTokens");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
