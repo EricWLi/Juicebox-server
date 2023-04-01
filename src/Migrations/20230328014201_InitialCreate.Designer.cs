@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JuiceboxServer.Migrations
 {
     [DbContext(typeof(JuiceboxContext))]
-    [Migration("20230326203126_InitialCreate")]
+    [Migration("20230328014201_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -180,7 +180,7 @@ namespace JuiceboxServer.Migrations
                     b.ToTable("QueueItems");
                 });
 
-            modelBuilder.Entity("JuiceboxServer.Models.SpotifyToken", b =>
+            modelBuilder.Entity("JuiceboxServer.Models.Tokens.TokenPair", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -189,24 +189,29 @@ namespace JuiceboxServer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AccessToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Provider")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("ExpiresAt")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<string>("RefreshToken")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SpotifyTokens");
+                    b.ToTable("Tokens");
+
+                    b.HasDiscriminator<string>("Provider").HasValue("TokenPair");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -342,6 +347,13 @@ namespace JuiceboxServer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("JuiceboxServer.Models.Tokens.SpotifyToken", b =>
+                {
+                    b.HasBaseType("JuiceboxServer.Models.Tokens.TokenPair");
+
+                    b.HasDiscriminator().HasValue("Spotify");
+                });
+
             modelBuilder.Entity("AppUserParty", b =>
                 {
                     b.HasOne("JuiceboxServer.Models.Party", null)
@@ -383,11 +395,13 @@ namespace JuiceboxServer.Migrations
                     b.Navigation("Party");
                 });
 
-            modelBuilder.Entity("JuiceboxServer.Models.SpotifyToken", b =>
+            modelBuilder.Entity("JuiceboxServer.Models.Tokens.TokenPair", b =>
                 {
                     b.HasOne("JuiceboxServer.Models.AppUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

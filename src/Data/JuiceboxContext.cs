@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using JuiceboxServer.Models;
+using JuiceboxServer.Models.Tokens;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace JuiceboxServer.Data
@@ -12,7 +13,7 @@ namespace JuiceboxServer.Data
 
         public DbSet<Party> Parties { get; set; } = null!;
         public DbSet<QueueItem> QueueItems { get; set; } = null!;
-        public DbSet<SpotifyToken> SpotifyTokens { get; set; } = null!;
+        public DbSet<TokenPair> Tokens { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,6 +34,11 @@ namespace JuiceboxServer.Data
             builder.Entity<QueueItem>()
                 .HasOne(item => item.Party)
                 .WithMany(party => party.Queue);
+
+            builder.Entity<SpotifyToken>()
+                .HasBaseType<TokenPair>()
+                .HasDiscriminator<string>("Provider")
+                .HasValue<SpotifyToken>("Spotify");
         }
     }
 }
