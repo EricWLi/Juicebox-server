@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     
-    environment:
-      ConnectionStrings__JuiceboxDB: "Server=localhost;Database=JuiceboxDb_Dev;User Id=sa;Password=P@ssw0rd;Trust Server Certificate=True;"
+    env_file:
+      - .env
 
     volumes:
       - ../..:/workspaces:cached
