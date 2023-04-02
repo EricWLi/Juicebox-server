@@ -14,8 +14,8 @@ namespace JuiceboxServer.Models.Requests
                 UserName = Username,
                 FirstName = FirstName,
                 LastName = LastName,
-                DateCreated = DateTime.Now,
-                DateUpdated = DateTime.Now
+                DateCreated = DateTime.UtcNow,
+                DateUpdated = DateTime.UtcNow
             };
         }
     }

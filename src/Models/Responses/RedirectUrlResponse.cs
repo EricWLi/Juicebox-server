@@ -2,6 +2,6 @@ namespace JuiceboxServer.Models.Responses
 {
     public class RedirectUrlResponse
     {
-        public string RedirectUrl { get; set; }
+        public string RedirectUrl { get; set; } = null!;
     }
 }
