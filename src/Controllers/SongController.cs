@@ -10,17 +10,14 @@ namespace JuiceboxServer.Controllers
     {
         private readonly ILogger<SongController> _logger;
         private readonly JuiceboxContext _context;
-        private readonly ISpotifyClient _spotifyClient;
 
         public SongController(
             ILogger<SongController> logger,
-            JuiceboxContext context,
-            ISpotifyClient spotifyClient
+            JuiceboxContext context
         )
         {
             _logger = logger;
             _context = context;
-            _spotifyClient = spotifyClient;
         }
 
         // TODO: GET /api/songs/search

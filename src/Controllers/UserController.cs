@@ -69,8 +69,7 @@ namespace JuiceboxServer.Controllers
                 return Forbid();
             }
             
-            AppUser user = await _userService.GetUserByUsernameAsync(model.Username);
-            string accessToken = _tokenService.CreateToken(user);
+            string accessToken = await _tokenService.CreateTokenAsync(model.Username);
 
             var response = new AuthenticationResponse {
                 Username = model.Username,
