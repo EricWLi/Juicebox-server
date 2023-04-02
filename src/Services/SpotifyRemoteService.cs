@@ -18,7 +18,7 @@ namespace JuiceboxServer.Services
         /// </summary>
         /// <param name="userId">The user's ID</param>
         /// <returns>The Spotify profile</returns>
-        public async Task<SpotifyProfile?> GetProfile(string userId)
+        public async Task<SpotifyResult> GetProfile(string userId)
         {
             string token = await _authService.GetAccessTokenAsync(userId);
             
@@ -26,7 +26,7 @@ namespace JuiceboxServer.Services
             request.Headers.Add("Authorization", $"Bearer {token}");
 
             var response = await _httpClient.SendAsync(request);
-            return await response.Content.ReadFromJsonAsync<SpotifyProfile>();
+            return await SpotifyResultFactory.CreateResultFromResponse<SpotifyProfile>(response);
         }
         
         /// <summary>
@@ -34,7 +34,7 @@ namespace JuiceboxServer.Services
         /// </summary>
         /// <param name="userId">The user's ID</param>
         /// <returns>The Spotify player state</returns>
-        public async Task<SpotifyDevice> GetPlayerState(string userId)
+        public async Task<SpotifyResult> GetPlayerState(string userId)
         {
             string token = await _authService.GetAccessTokenAsync(userId);
             
@@ -42,8 +42,7 @@ namespace JuiceboxServer.Services
             request.Headers.Add("Authorization", $"Bearer {token}");
 
             var response = await _httpClient.SendAsync(request);
-            var device = await response.Content.ReadFromJsonAsync<SpotifyDevice>();
-            return device!;
+            return await SpotifyResultFactory.CreateResultFromResponse<SpotifyDevice>(response);
         }
 
         /// <summary>
@@ -51,7 +50,7 @@ namespace JuiceboxServer.Services
         /// </summary>
         /// <param name="userId">The user's ID</param>
         /// <returns>The collection of devices.</returns>
-        public async Task<IEnumerable<SpotifyDevice>> GetDevices(string userId)
+        public async Task<SpotifyResult> GetDevices(string userId)
         {
             string token = await _authService.GetAccessTokenAsync(userId);
             
@@ -59,8 +58,7 @@ namespace JuiceboxServer.Services
             request.Headers.Add("Authorization", $"Bearer {token}");
 
             var response = await _httpClient.SendAsync(request);
-            var deviceResponse = await response.Content.ReadFromJsonAsync<SpotifyDeviceResponse>();
-            return deviceResponse!.Devices;
+            return await SpotifyResultFactory.CreateResultFromResponse<SpotifyDeviceResponse>(response);
         }
 
         /// <summary>
@@ -69,7 +67,7 @@ namespace JuiceboxServer.Services
         /// <param name="userId">The user's ID</param>
         /// <param name="device">The device to activate</param>
         /// <returns>Whether the device was activated successfully</returns>
-        public async Task<bool> TransferPlayback(string userId, string device)
+        public async Task<SpotifyResult> TransferPlayback(string userId, string device)
         {
             string token = await _authService.GetAccessTokenAsync(userId);
 
@@ -80,7 +78,7 @@ namespace JuiceboxServer.Services
             });
 
             var response = await _httpClient.SendAsync(request);
-            return response.IsSuccessStatusCode;
+            return await SpotifyResultFactory.CreateResultFromResponse(response);
         }
 
         /// <summary>
@@ -98,8 +96,7 @@ namespace JuiceboxServer.Services
             request.Content = JsonContent.Create(new { uris = new[] { itemUri } });
 
             var response = await _httpClient.SendAsync(request);
-            var result = await SpotifyResultFactory.CreateResultFromResponse(response);
-            return result;
+            return await SpotifyResultFactory.CreateResultFromResponse(response);
         }
 
         /// <summary>
@@ -107,7 +104,7 @@ namespace JuiceboxServer.Services
         /// </summary>
         /// <param name="userId">The user's ID</param>
         /// <param name="itemUri">The URI of the item to add</param>
-        public async Task<bool> AddToQueue(string userId, string itemUri, string? device)
+        public async Task<SpotifyResult> AddToQueue(string userId, string itemUri, string? device)
         {
             string token = await _authService.GetAccessTokenAsync(userId);
             
@@ -115,10 +112,7 @@ namespace JuiceboxServer.Services
             request.Headers.Add("Authorization", $"Bearer {token}");
 
             var response = await _httpClient.SendAsync(request);
-
-            // TODO: Handle 400, 404 errors
-
-            return response.IsSuccessStatusCode;
+            return await SpotifyResultFactory.CreateResultFromResponse(response);
         }
     }
 }

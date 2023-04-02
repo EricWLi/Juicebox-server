@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace JuiceboxServer.Models
 {
-    public class SpotifyProfile
+    public class SpotifyProfile : ISpotifyContent
     {
         [JsonPropertyName("id")]
         public string Id { get; set; } = null!;

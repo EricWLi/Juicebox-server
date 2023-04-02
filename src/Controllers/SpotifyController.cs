@@ -89,7 +89,7 @@ namespace JuiceboxServer.Controllers
         {
             string userId = GetCurrentUserId();
             var result = await _remoteService.AddToQueue(userId, uri, device);
-            return result ? Ok() : BadRequest();
+            return result.IsSuccessful ? Ok(result.Content) : StatusCode(result.StatusCode, result.Error);
         }
     }
 }
