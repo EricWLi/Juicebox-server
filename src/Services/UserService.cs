@@ -1,3 +1,4 @@
+using JuiceboxServer.Data;
 using JuiceboxServer.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,7 +13,8 @@ namespace JuiceboxServer.Services
         public UserService(
             ILogger<UserService> logger,
             UserManager<AppUser> userManager, 
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager
+        )
         {
             _logger = logger;
             _userManager = userManager;

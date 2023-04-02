@@ -8,26 +8,36 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace JuiceboxServer.Services
 {
+    /// <summary>
+    /// Service to create a JSON Web Token for a user for authentication purposes.
+    /// </summary>
     public class JwtTokenService : ITokenService
     {
-        private readonly IUserService _userService;
         private readonly JwtSettings _settings;
+        private readonly IUserService _userService;
 
-        public JwtTokenService(IUserService userService, IOptions<JwtSettings> settings)
+        public JwtTokenService(IOptions<JwtSettings> settings, IUserService userService)
         {
-            _userService = userService;
+            if (settings.Value.Secret == null)
+            {
+                throw new ApplicationException("JWT Secret is not configured.");
+            }
+
             _settings = settings.Value;
+            _userService = userService;
         }
 
-        public string CreateToken(AppUser user)
+        public async Task<string> CreateTokenAsync(string username)
         {
+            var user = await _userService.GetUserByUsernameAsync(username);
+
             if (user == null)
             {
-                throw new ArgumentNullException(nameof(user));
+                throw new Exception($"The username {username} was not found.");
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var secret = Encoding.ASCII.GetBytes(_settings.Secret);
+            var secret = Encoding.ASCII.GetBytes(_settings.Secret!);
             var key = new SymmetricSecurityKey(secret);
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

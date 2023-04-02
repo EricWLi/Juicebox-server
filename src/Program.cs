@@ -55,8 +55,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ISpotifyClient, SpotifyClient>();
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
+builder.Services.AddScoped(typeof(ITokenStore<>), typeof(TokenStore<>));
+builder.Services.AddScoped<SpotifyAuthService>();
+builder.Services.AddScoped<SpotifyRemoteService>();
 
 var app = builder.Build();
 
