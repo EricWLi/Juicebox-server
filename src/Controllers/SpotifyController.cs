@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using JuiceboxServer.Data;
+using JuiceboxServer.Models.Requests;
 using JuiceboxServer.Models.Responses;
 using JuiceboxServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -72,11 +73,20 @@ namespace JuiceboxServer.Controllers
         public async Task<IActionResult> Devices()
         {
             string userId = GetCurrentUserId();
-            var devices = await _remoteService.GetDevices(userId);
-            return Ok(devices);
+            var result = await _remoteService.GetDevices(userId);
+            return result.IsSuccessful ? Ok(result.Content) : StatusCode(result.StatusCode, result.Error);
+        }
+
+        [HttpPost("transfer")]
+        public async Task<IActionResult> Transfer([FromBody] SpotifyTransferRequest request)
+        {
+            string userId = GetCurrentUserId();
+            var result = await _remoteService.TransferPlayback(userId, request.Device);
+            return result.IsSuccessful ? Ok(result.Content) : StatusCode(result.StatusCode, result.Error);
         }
 
         [HttpPost("play")]
+        [Authorize]
         public async Task<IActionResult> Play([FromQuery] string uri, [FromQuery] string? device)
         {
             string userId = GetCurrentUserId();
@@ -85,6 +95,7 @@ namespace JuiceboxServer.Controllers
         }
 
         [HttpPost("queue")]
+        [Authorize]
         public async Task<IActionResult> Queue([FromQuery] string uri, [FromQuery] string? device)
         {
             string userId = GetCurrentUserId();
