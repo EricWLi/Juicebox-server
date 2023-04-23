@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using JuiceboxServer.Models.Spotify;
 
 namespace JuiceboxServer.Models.Responses
 {

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace JuiceboxServer.Models
+namespace JuiceboxServer.Models.Spotify
 {
     public class SpotifyError
     {

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace JuiceboxServer.Models
 {
@@ -11,6 +12,11 @@ namespace JuiceboxServer.Models
         public int Id { get; set; }
 
         /// <summary>
+        /// The id of the person hosting the party.
+        /// </summary>
+        public string HostId { get; set; } = null!;
+
+        /// <summary>
         /// The name of the room/party. (Optional)
         /// </summary>
         public string? Name { get; set; }
@@ -18,12 +24,12 @@ namespace JuiceboxServer.Models
         /// <summary>
         /// The date the party was created.
         /// </summary>
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// The date the party was last updated.
         /// </summary>
-        public DateTime DateUpdated { get; set; }
+        public DateTime DateUpdated { get; set; } = DateTime.UtcNow;
 
 
         /**
@@ -33,7 +39,8 @@ namespace JuiceboxServer.Models
         /// <summary>
         /// The navigation property to the user that created the party.
         /// </summary>
-        public AppUser Host { get; set; } = null!;
+        [JsonIgnore]
+        public AppUser Host { get; } = null!;
 
         /// <summary>
         /// The party members.

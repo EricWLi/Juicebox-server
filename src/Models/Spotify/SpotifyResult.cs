@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json.Serialization;
 using JuiceboxServer.Models.Responses;
 
-namespace JuiceboxServer.Models
+namespace JuiceboxServer.Models.Spotify
 {
     public class SpotifyResult
     {
