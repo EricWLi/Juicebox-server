@@ -1,5 +1,6 @@
 using JuiceboxServer.Models;
 using JuiceboxServer.Models.Responses;
+using JuiceboxServer.Models.Spotify;
 
 namespace JuiceboxServer.Services
 {
@@ -26,7 +27,7 @@ namespace JuiceboxServer.Services
             request.Headers.Add("Authorization", $"Bearer {token}");
 
             var response = await _httpClient.SendAsync(request);
-            return await SpotifyResultFactory.CreateResultFromResponse<SpotifyProfile>(response);
+            return await SpotifyResultFactory.CreateResultFromResponse<Profile>(response);
         }
         
         /// <summary>
@@ -42,7 +43,7 @@ namespace JuiceboxServer.Services
             request.Headers.Add("Authorization", $"Bearer {token}");
 
             var response = await _httpClient.SendAsync(request);
-            return await SpotifyResultFactory.CreateResultFromResponse<SpotifyDevice>(response);
+            return await SpotifyResultFactory.CreateResultFromResponse<Device>(response);
         }
 
         /// <summary>

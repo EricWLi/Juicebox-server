@@ -37,7 +37,7 @@ namespace JuiceboxServer.Services
             }
             else
             {
-                _context.Tokens.Add(pair);
+                await _context.Tokens.AddAsync(pair);
                 token = pair;
             }
 
