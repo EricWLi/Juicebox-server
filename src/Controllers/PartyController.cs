@@ -1,24 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using JuiceboxServer.Data;
-using JuiceboxServer.Models;
+using Microsoft.AspNetCore.Authorization;
+using JuiceboxServer.Services;
 
 namespace JuiceboxServer.Controllers
 {
     [ApiController]
     [Route("/api/parties")]
-    public class PartyController : ControllerBase
+    public class PartyController : BaseController
     {
         private readonly ILogger<PartyController> _logger;
-        private readonly JuiceboxContext _context;
+        private readonly IPartyService _partyService;
+        private readonly IUserService _userService;
 
-        public PartyController(ILogger<PartyController> logger, JuiceboxContext context)
+        public PartyController(ILogger<PartyController> logger, IPartyService partyService, IUserService userService)
         {
             _logger = logger;
-            _context = context;
+            _partyService = partyService;
+            _userService = userService;
         }
 
-        // TODO: POST /api/parties
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateParty()
+        {
+            string userId = GetCurrentUserId();
+            var party = await _partyService.CreateAsync(userId);
+            return Ok(party);
+        }
 
         // TODO: GET /api/parties/{id}
 

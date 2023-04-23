@@ -1,5 +1,5 @@
-using System.Security.Claims;
 using JuiceboxServer.Data;
+using JuiceboxServer.Models.QueryParameters;
 using JuiceboxServer.Models.Requests;
 using JuiceboxServer.Models.Responses;
 using JuiceboxServer.Services;
@@ -10,23 +10,33 @@ namespace JuiceboxServer.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SpotifyController : ControllerBase
+    public class SpotifyController : BaseController
     {
         private readonly JuiceboxContext _context;
         private readonly SpotifyAuthService _authService;
+        private readonly SpotifySearchService _searchService;
         private readonly SpotifyRemoteService _remoteService;
-
-        private string GetCurrentUserId() => User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
 
         public SpotifyController(
             JuiceboxContext context,
             SpotifyAuthService authService,
+            SpotifySearchService searchService,
             SpotifyRemoteService profileService
         )
         {
             _context = context;
             _authService = authService;
+            _searchService = searchService;
             _remoteService = profileService;
+        }
+
+        [HttpGet("search")]
+        [Authorize]
+        public async Task<IActionResult> Search([FromQuery] SearchQueryParameter request)
+        {
+            string userId = GetCurrentUserId();
+            var result = await _searchService.Search(userId, request);
+            return result.IsSuccessful ? Ok(result.Content) : StatusCode(result.StatusCode, result.Error);
         }
 
         [HttpPost("authorize")]
